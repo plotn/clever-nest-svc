@@ -7,10 +7,10 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface ConfRepository : JpaRepository<Conf, Long> {
-    fun findBycId(cId: Long): Conf
-    fun findBycName(cName: String): Conf
+    fun findBycId(cId: Long): Conf?
+    fun findBycName(cName: String): Conf?
 
-    @Query(value = "SELECT t FROM Conf t WHERE t.cId != -1 order by t.cName",
+    @Query(value = "SELECT t FROM Conf t WHERE t.cId != -1 order by t.cId",
             nativeQuery = false)
     fun findAllFiltered(): List<Conf>
 

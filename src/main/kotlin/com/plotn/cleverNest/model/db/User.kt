@@ -13,7 +13,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "CNEST_USERS")
 @JsonIgnoreProperties(value = ["userPassw"])
-data class Users (
+data class User (
 
     @ApiModelProperty(value = "Users unique identifier. Sequence-based. -1 is internal")
     @JsonProperty("userId")

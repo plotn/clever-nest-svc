@@ -29,8 +29,9 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
     internal lateinit var dataSource: DataSource
 
     override fun configure(httpSecurity: HttpSecurity) {
-        httpSecurity.cors().and().csrf().disable().authorizeRequests().antMatchers("/").
-            permitAll().antMatchers(HttpMethod.POST, "/login").permitAll()
+        httpSecurity.cors().and().csrf().disable().authorizeRequests()
+                .antMatchers("/").permitAll()
+                .antMatchers(HttpMethod.POST, "/login").permitAll()
                 .antMatchers(HttpMethod.GET, "/login").permitAll() // For Test on Browser
                 .anyRequest().authenticated()
                 .and()

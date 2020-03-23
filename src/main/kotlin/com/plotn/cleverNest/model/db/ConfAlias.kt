@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty
 import org.springframework.validation.annotation.Validated
 import javax.persistence.*
 
-@ApiModel(description = "Configurations")
+@ApiModel(description = "Configuration aliases")
 @Validated
 @Entity
 @Table(name = "CN_CONF_ALIAS")
