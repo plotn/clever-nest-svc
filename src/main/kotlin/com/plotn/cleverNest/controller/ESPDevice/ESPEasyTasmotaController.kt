@@ -1,4 +1,4 @@
-package com.plotn.cleverNest.controller.ESPEasy
+package com.plotn.cleverNest.controller.ESPDevice
 
 import com.plotn.cleverNest.auth.CheckAuth
 import com.plotn.cleverNest.controller.DeviceController
@@ -23,8 +23,8 @@ import java.time.OffsetDateTime
 
 
 @RestController
-@RequestMapping("/espeasy")
-class ESPEasyController {
+@RequestMapping("/espdevice")
+class ESPEasyTasmotaController {
 
     enum class ESPEasyCommand {
         ON, OFF, STATUS
@@ -80,13 +80,22 @@ class ESPEasyController {
         val restTemplate = RestTemplate(getClientHttpRequestFactory())
         log("device command is: $cmd")
         val resp = restTemplate.getForEntity<String>(cmd, String::class.java)
-        val sBody = resp.body
+        var sBody = resp.body
         if (sBody.isNullOrBlank()) throw DeviceCommException("Empty response from device URL")
+        log("device response is: $sBody")
+        sBody = sBody.replace("\n", " ")
+        var idx = sBody.lastIndexOf("}",0)
+        log("index of }: $idx")
+        if (sBody.lastIndexOf("}",0)>=0)
+            sBody = sBody.substring(0,sBody.lastIndexOf("}",0))
+        if (sBody.endsWith("Ok")) sBody = sBody.substring(0,sBody.length-2)
+        log("device updated response is: $sBody")
         // try to parse json returned
         var state: String = ""
         try {
             val jsonObject = JSONObject(sBody)
             if (jsonObject.has("state")) state = jsonObject["state"].toString()
+            if (jsonObject.has("POWER")) state = jsonObject["POWER"].toString()
         } catch (E: Exception) {
             log("cannot parse rsponse JSON")
         }
@@ -106,7 +115,7 @@ class ESPEasyController {
         }
         if (domovenokFormat) {
             var sstate = "false"
-            if (state == "1") sstate = "true"
+            if ((state == "1")||(state == "ON")) sstate = "true"
             return "{\"value\": $sstate}"
         }
         return sBody

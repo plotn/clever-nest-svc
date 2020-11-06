@@ -1,0 +1,2 @@
+scp /home/plotn/Projects/plotnCleverNest/db/clever_nest_db.mv.db plotn@192.168.0.57:/home/plotn/Projects/plotnCleverNest/db/clever_nest_db.mv.db
+scp /home/plotn/Projects/plotnCleverNest/db/clever_nest_db.trace.db plotn@192.168.0.57:/home/plotn/Projects/plotnCleverNest/db/clever_nest_db.trace.db

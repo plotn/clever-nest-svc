@@ -1,11 +1,11 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.2.1.BUILD-SNAPSHOT"
+	id("org.springframework.boot") version "2.2.2.BUILD-SNAPSHOT"
 	id("io.spring.dependency-management") version "1.0.8.RELEASE"
-	kotlin("jvm") version "1.3.50"
-	kotlin("plugin.spring") version "1.3.50"
-	kotlin("plugin.jpa") version "1.3.50"
+	kotlin("jvm") version "1.3.60"
+	kotlin("plugin.spring") version "1.3.60"
+	kotlin("plugin.jpa") version "1.3.60"
 }
 
 group = "com.plotn.cleverNest"
@@ -23,6 +23,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-cache")
+	implementation("org.springframework.boot:spring-boot-configuration-processor")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 	implementation("com.h2database:h2:1.4.200")
@@ -34,10 +35,14 @@ dependencies {
 		exclude(group = "org.mapstruct", module = "mapstruct")
 	})
 	implementation("net.bull.javamelody:javamelody-spring-boot-starter:1.79.0")
+        implementation("org.slf4j:slf4j-api")
+	implementation("ch.qos.logback:logback-classic")
+	implementation("ch.qos.logback:logback-core")
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
 	testImplementation("org.springframework.security:spring-security-test")
+	implementation( "org.jsoup:jsoup:1.13.1")
 }
 
 tasks.withType<Test> {
