@@ -46,7 +46,7 @@ class WebSecurityConfig : WebSecurityConfigurerAdapter() {
         val configuration = CorsConfiguration()
         val o = ArrayList<String>()
         o.add("*")
-        configuration.allowedOrigins = o
+        configuration.allowedOriginPatterns = o
         val m = ArrayList<String>()
         m.add("GET")
         m.add("POST")

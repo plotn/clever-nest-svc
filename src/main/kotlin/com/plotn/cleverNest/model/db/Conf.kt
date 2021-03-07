@@ -33,6 +33,11 @@ data class Conf (
     @ApiModelProperty(value = "Check hrefs")
     @JsonProperty("cCheckHrefs")
     @Column(name = "C_CHECK_HREFS")
-    val cCheckHrefs: String? = null
+    val cCheckHrefs: String? = null,
+
+    @ApiModelProperty(value = "Conf is default - for device refreshing")
+    @JsonProperty("cDefault")
+    @Column(name = "C_DEFAULT")
+    val cDefault: Int
 
 )

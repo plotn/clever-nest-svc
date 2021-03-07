@@ -89,7 +89,7 @@ class ESPEasyTasmotaController {
         if (sBody.lastIndexOf("}",0)>=0)
             sBody = sBody.substring(0,sBody.lastIndexOf("}",0))
         if (sBody.endsWith("Ok")) sBody = sBody.substring(0,sBody.length-2)
-        log("device updated response is: $sBody")
+        log("device '${dev.dName}' updated response is: $sBody")
         // try to parse json returned
         var state: String = ""
         try {
@@ -102,15 +102,46 @@ class ESPEasyTasmotaController {
         when (command.toUpperCase()) {
             "ON", "1" ->  {
                 dev.dLastState = "1"
-                dev.dLastStateBy = SecurityContextHolder.getContext().authentication.name
+                dev.dLastStateBy = SecurityContextHolder.getContext()?.authentication?.name?: "system"
                 dev.dLastStateWhen = OffsetDateTime.now()
+                dev.dLastStatusCheck = dev.dLastStateWhen
+                log("update device '${dev.dName}' last state to ON")
                 deviceRepository.save(dev)
             }
             "OFF", "0" -> {
                 dev.dLastState = "0"
-                dev.dLastStateBy = SecurityContextHolder.getContext().authentication.name
+                dev.dLastStateBy = SecurityContextHolder.getContext()?.authentication?.name?: "system"
                 dev.dLastStateWhen = OffsetDateTime.now()
+                dev.dLastStatusCheck = dev.dLastStateWhen
+                log("update device '${dev.dName}' last state to OFF")
                 deviceRepository.save(dev)
+            }
+            "STATUS" -> {
+                val lastState = dev.dLastState?: "?"
+                var wasSet = false
+                if (((state == "1")||(state == "ON")) && (lastState != "1")) {
+                    dev.dLastState = "1"
+                    dev.dLastStateBy = SecurityContextHolder.getContext()?.authentication?.name?: "system"
+                    dev.dLastStateWhen = OffsetDateTime.now()
+                    dev.dLastStatusCheck = dev.dLastStateWhen
+                    log("update device '${dev.dName}' last state to ON")
+                    wasSet = true
+                    deviceRepository.save(dev)
+                }
+                if (((state == "0")||(state == "OFF")) && (lastState != "0")) {
+                    dev.dLastState = "1"
+                    dev.dLastStateBy = SecurityContextHolder.getContext()?.authentication?.name?: "system"
+                    dev.dLastStateWhen = OffsetDateTime.now()
+                    dev.dLastStatusCheck = dev.dLastStateWhen
+                    log("update device '${dev.dName}' last state to OFF")
+                    wasSet = true
+                    deviceRepository.save(dev)
+                }
+                if (!wasSet) {
+                    log("update device '${dev.dName}' last status timestamp")
+                    dev.dLastStatusCheck = OffsetDateTime.now()
+                    deviceRepository.save(dev)
+                }
             }
         }
         if (domovenokFormat) {

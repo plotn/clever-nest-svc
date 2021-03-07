@@ -1,0 +1,13 @@
+[Unit]
+Description=plotn cleverNest app 1.0
+
+[Service]
+WorkingDirectory=/opt/cleverNest
+ExecStart=/usr/bin/java -jar nestService-0.0.1-SNAPSHOT.jar
+User=plotn
+Type=simple
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

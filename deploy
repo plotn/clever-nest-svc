@@ -1,1 +1,1 @@
-scp /home/plotn/github/clever-nest-svc/build/libs/nestService-0.0.1-SNAPSHOT.jar plotn@192.168.0.57:/opt/cleverNest
+scp /home/plotn/github/clever-nest-svc/build/libs/nestService-0.0.1-SNAPSHOT.jar plotn@192.168.0.116:/opt/cleverNest

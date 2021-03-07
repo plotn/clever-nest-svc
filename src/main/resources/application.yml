@@ -37,7 +37,7 @@ logging:
       springframework:
         web:
           filter:
-            CommonsRequestLoggingFilter: DEBUG
+            CommonsRequestLoggingFilter: WARN
 app:
   err_include_stacktrace: 1
   data:

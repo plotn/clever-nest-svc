@@ -41,7 +41,7 @@ class NewsController {
         if (listNews.size>0) listNews.removeAt(0)
         if (listNews.size>0) {
             var rnd = Random.nextInt(listNews.size)
-            nr.newsText = listNews.get(rnd)
+            nr.newsText = listNews[rnd]
         }
         val restTemplate = RestTemplate()
         val uriComponents = UriComponentsBuilder.newInstance()
@@ -49,7 +49,7 @@ class NewsController {
                 .queryParam("text", nr.newsText.replace("\\s+".toRegex(), "_"))
                 .queryParam("delayed","1")
                 .build()
-        val resp = restTemplate.getForEntity<String>(uriComponents.toUriString(), String::class.java)
+        val resp = restTemplate.getForEntity(uriComponents.toUriString(), String::class.java)
         var sBody = resp.body
         return nr
     }

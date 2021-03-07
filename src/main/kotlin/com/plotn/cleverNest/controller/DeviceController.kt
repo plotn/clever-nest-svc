@@ -64,13 +64,17 @@ class DeviceController {
                      @RequestParam("dLinkLoc") dLinkLoc: Long): List<Device> {
         checkAuth.chechAuth()
         var confAliasList = confAliasRepository.findByConf(aLinkConf)
+        val devices = ArrayList<Device>()
         for (dev in deviceRepository.findBydLinkLoc(dLinkLoc)) {
-            for (confAlias in confAliasList) {
-                dev.dCommandOn = dev.dCommandOn?.replace("[${confAlias.aName}]",confAlias.aValue)
-                dev.dCommandOff = dev.dCommandOff?.replace("[${confAlias.aName}]",confAlias.aValue)
-                dev.dCommandStatus = dev.dCommandStatus?.replace("[${confAlias.aName}]",confAlias.aValue)
+            if (dev.dEnabled == 1) {
+                for (confAlias in confAliasList) {
+                    dev.dCommandOn = dev.dCommandOn?.replace("[${confAlias.aName}]", confAlias.aValue)
+                    dev.dCommandOff = dev.dCommandOff?.replace("[${confAlias.aName}]", confAlias.aValue)
+                    dev.dCommandStatus = dev.dCommandStatus?.replace("[${confAlias.aName}]", confAlias.aValue)
+                }
+                devices.add(dev)
             }
         }
-        return deviceRepository.findBydLinkLoc(dLinkLoc);
+        return devices
     }
 }
