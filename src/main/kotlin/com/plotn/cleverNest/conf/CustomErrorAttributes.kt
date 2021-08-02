@@ -2,6 +2,7 @@ package com.plotn.cleverNest.conf
 
 import com.plotn.cleverNest.controller.MainController
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.web.error.ErrorAttributeOptions
 import java.time.format.DateTimeFormatter
 import java.time.OffsetDateTime
 import org.springframework.web.context.request.WebRequest
@@ -16,17 +17,26 @@ class CustomErrorAttributes : DefaultErrorAttributes() {
     @Autowired
     lateinit var env: Environment
 
-    override fun getErrorAttributes(webRequest: WebRequest, includeStackTrace: Boolean): Map<String, Any> {
-
-        val bTrace = env.getProperty("app.err_include_stacktrace").equals("1")
-        //   bTrace = false;
-        // Let Spring handle the error first, we will modify later :)
-        val errorAttributes = super.getErrorAttributes(webRequest, bTrace)
-        // insert a new keys
+    override fun getErrorAttributes(webRequest: WebRequest?, options: ErrorAttributeOptions?): MutableMap<String, Any> {
+        val bTrace = env.getProperty("app.err_include_stacktrace")?.equals("1")?: false
+        val opts = if (bTrace)
+            options?.including(
+                ErrorAttributeOptions.Include.STACK_TRACE, ErrorAttributeOptions.Include.BINDING_ERRORS,
+                ErrorAttributeOptions.Include.EXCEPTION, ErrorAttributeOptions.Include.MESSAGE)
+        else
+            options?.including(
+                ErrorAttributeOptions.Include.BINDING_ERRORS,
+                ErrorAttributeOptions.Include.EXCEPTION, ErrorAttributeOptions.Include.MESSAGE)
+        val errorAttributes = super.getErrorAttributes(webRequest, opts)
         val onow = OffsetDateTime.now()
         val dtf = DateTimeFormatter.ISO_DATE_TIME
-        errorAttributes.put("datetime_iso", dtf.format(onow))
-        errorAttributes.put("version", MainController.APP_VERSION_NUMBER)
+        errorAttributes["datetime_iso"] = dtf.format(onow)
+        errorAttributes["version"] = MainController.APP_VERSION_NUMBER
+//        val s: String? = errorAttributes["trace"] as String?
+//        if (s != null) {
+//            if (s.indexOf("ERROR:") >=0 )
+//                errorAttributes["add_error"] = s.substring(s.indexOf("ERROR:")  )
+//        }
         return errorAttributes
     }
 

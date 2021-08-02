@@ -47,6 +47,10 @@ app:
 openexchangerates:
   url: https://openexchangerates.org/api/latest.json
   app_id: 7a63e90cc2c14efc868ecdaa7061fed2
+news:
+  meduzaUrl: https://meduza.io/rss/all
+  clockAddr: 192.168.0.112
+
 javamelody:
   # Enable JavaMelody auto-configuration (optional, default: true)
   enabled: true

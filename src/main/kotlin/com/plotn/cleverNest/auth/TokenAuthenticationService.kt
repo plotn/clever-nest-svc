@@ -2,10 +2,13 @@ package com.plotn.cleverNest.auth
 
 import com.plotn.cleverNest.exceptions.JwtErrorException
 import io.jsonwebtoken.*
+import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.SignatureException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import java.util.*
+import javax.crypto.SecretKey
+import javax.crypto.spec.SecretKeySpec
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -30,22 +33,23 @@ object TokenAuthenticationService {
     internal val upatUnauthHash = HashMap<String, UsernamePasswordAuthenticationToken>()
 
     fun addAuthentication(res: HttpServletResponse, username: String): String {
-        val JWT = Jwts.builder().setSubject(username)
-                .setExpiration(Date(System.currentTimeMillis() + EXPIRATIONTIME))
-                .signWith(SignatureAlgorithm.HS512, SECRET).compact()
-        res.addHeader(HEADER_STRING, "$TOKEN_PREFIX $JWT")
-        return "$TOKEN_PREFIX $JWT"
+        val bytes = Decoders.BASE64.decode(SECRET)
+        val key: SecretKey = SecretKeySpec(bytes, SignatureAlgorithm.HS512.jcaName)
+        val jwt = Jwts.builder().setSubject(username)
+            .setExpiration(Date(System.currentTimeMillis() + EXPIRATIONTIME))
+            .signWith(key, SignatureAlgorithm.HS512)
+            .compact()
+        res.addHeader(HEADER_STRING, "$TOKEN_PREFIX $jwt")
+        return "$TOKEN_PREFIX $jwt"
     }
 
     fun getAuthentication(request: HttpServletRequest): Authentication? {
         val token = request.getHeader(HEADER_STRING)
         try {
-            if (token != null) {
+            return if (token != null) {
                 // parse the token.
-                val user = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.replace(TOKEN_PREFIX, "")).getBody()
-                        .getSubject()
-
-                return if (user != null) UsernamePasswordAuthenticationToken(user, null, emptyList()) else null
+                val user = Jwts.parserBuilder().setSigningKey(SECRET).build().parseClaimsJws(token.replace(TOKEN_PREFIX, "")).body.subject
+                if (user != null) UsernamePasswordAuthenticationToken(user, null, emptyList()) else null
             } else {
                 // plotn - if no token specified, claim that there is "unauth" user login ( for deny - remove next line )
                 val sName = "unauth_" + request.remoteAddr.replace("\\.".toRegex(), "_")
@@ -54,7 +58,7 @@ object TokenAuthenticationService {
                     upatUnauth = UsernamePasswordAuthenticationToken(sName, null, emptyList())
                     upatUnauthHash[sName] = upatUnauth
                 }
-                return upatUnauth//new UsernamePasswordAuthenticationToken("unauth", null, Collections.emptyList());
+                upatUnauth//new UsernamePasswordAuthenticationToken("unauth", null, Collections.emptyList());
             }
         } catch (ex: SignatureException) {
             throw JwtErrorException(ex.javaClass.getSimpleName() + " " + ex.message, ex)

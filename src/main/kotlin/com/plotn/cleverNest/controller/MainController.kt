@@ -1,8 +1,5 @@
 package com.plotn.cleverNest.controller
 
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.context.annotation.Bean
-import org.springframework.core.env.Environment
 import org.springframework.http.MediaType
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,7 +14,7 @@ class MainController {
     @ResponseBody
     fun welcome(): String {
         var s = "<html><body><h1>Plotn CleverNest service, version: $APP_VERSION_NUMBER</h1><hr>"
-        s += "Plotn CleverNest service. Start with <a href='swagger-ui.html'>swagger-ui.html</a> or <a href='monitoring'>monitoring.</a><br>\n"
+        s += "Plotn CleverNest service. Start with <a href='swagger-ui/'>/swagger-ui/</a> or <a href='monitoring'>monitoring.</a><br>\n"
         s += "<a href='passwhash?passw=123'>password encryption<a><br>"
         s += "</body></html>";
         return s

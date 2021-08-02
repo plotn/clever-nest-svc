@@ -97,7 +97,7 @@ class ESPEasyTasmotaController {
             if (jsonObject.has("state")) state = jsonObject["state"].toString()
             if (jsonObject.has("POWER")) state = jsonObject["POWER"].toString()
         } catch (E: Exception) {
-            log("cannot parse rsponse JSON")
+            log("cannot parse response JSON")
         }
         when (command.toUpperCase()) {
             "ON", "1" ->  {
