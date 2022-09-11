@@ -2,7 +2,7 @@ server:
   port: 8086
 spring:
   datasource:
-    password: password
+    password: sa
     url: jdbc:h2:file:/home/plotn/Projects/plotnCleverNest/db/clever_nest_db
     driverClassName: org.h2.Driver
     username: sa
@@ -48,8 +48,9 @@ openexchangerates:
   url: https://openexchangerates.org/api/latest.json
   app_id: 7a63e90cc2c14efc868ecdaa7061fed2
 news:
-  meduzaUrl: https://meduza.io/rss/all
+  meduzaUrl: https://meduza102.global.ssl.fastly.net/rss/all
   clockAddr: 192.168.0.112
+  easygetAddr: http://easyget.knownreader.com
 
 javamelody:
   # Enable JavaMelody auto-configuration (optional, default: true)

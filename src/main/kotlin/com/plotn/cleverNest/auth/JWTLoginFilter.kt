@@ -7,6 +7,7 @@ import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher
 import java.io.IOException
+import java.util.*
 import javax.servlet.FilterChain
 import javax.servlet.ServletException
 import javax.servlet.http.HttpServletRequest
@@ -42,7 +43,7 @@ class JWTLoginFilter(url: String, authManager: AuthenticationManager) : Abstract
 
         println("Authorization String=$authorizationString")
         if (request.requestURI != null)
-            if (request.requestURI.toLowerCase() == "/login") {
+            if (request.requestURI.lowercase(Locale.getDefault()) == "/login") {
                 response.status = HttpServletResponse.SC_OK
                 response.writer.write("{\"token\": \"" +
                         authorizationString + "\", " +

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.client.RestTemplate
 import java.time.OffsetDateTime
+import java.util.*
 
 
 @RestController
@@ -71,7 +72,7 @@ class ESPEasyTasmotaController {
         val dev = deviceController.getDevByIdAndConf(aLinkConf,dId,password)?:
             throw DeviceCommException("Cannot find device")
         var cmd: String = ""
-        when (command.toUpperCase()) {
+        when (command.uppercase(Locale.getDefault())) {
             "ON", "1" -> cmd = dev.dCommandOn?: ""
             "OFF", "0" -> cmd = dev.dCommandOff?: ""
             "STATUS" -> cmd = dev.dCommandStatus?: ""
@@ -99,7 +100,7 @@ class ESPEasyTasmotaController {
         } catch (E: Exception) {
             log("cannot parse response JSON")
         }
-        when (command.toUpperCase()) {
+        when (command.uppercase(Locale.getDefault())) {
             "ON", "1" ->  {
                 dev.dLastState = "1"
                 dev.dLastStateBy = SecurityContextHolder.getContext()?.authentication?.name?: "system"

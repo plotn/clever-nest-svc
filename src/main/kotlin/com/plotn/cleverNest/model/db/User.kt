@@ -2,20 +2,19 @@ package com.plotn.cleverNest.model.db
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import io.swagger.annotations.ApiModel
-import io.swagger.annotations.ApiModelProperty
+import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.validation.annotation.Validated
 import java.time.OffsetDateTime
 import javax.persistence.*
 
-@ApiModel(description = "User definition")
+@Schema(description = "User definition")
 @Validated
 @Entity
 @Table(name = "CNEST_USERS")
 @JsonIgnoreProperties(value = ["userPassw"])
 data class User (
 
-    @ApiModelProperty(value = "Users unique identifier. Sequence-based. -1 is internal")
+    @Schema(description = "Users unique identifier. Sequence-based. -1 is internal")
     @JsonProperty("userId")
     @Id
     @GeneratedValue(generator = "CNEST_USERS_SEQ")
@@ -23,47 +22,47 @@ data class User (
     @Column(name = "USER_ID")
     val userId: Long,
 
-    @ApiModelProperty(value = "User login. Must be unique")
+    @Schema(description = "User login. Must be unique")
     @JsonProperty("userLogin")
     @Column(name = "USER_LOGIN")
     val userLogin: String,
 
-    @ApiModelProperty(value = "user's password hash")
+    @Schema(description = "user's password hash")
     @JsonProperty("userPassw")
     @Column(name = "USER_PASSW")
     val userPassw: String,
 
-    @ApiModelProperty(value = "User registration ts")
+    @Schema(description = "User registration ts")
     @JsonProperty("userRegisterTs")
     @Column(name = "USER_REGISTER_TS")
     var userRegisterDate: OffsetDateTime,
 
-    @ApiModelProperty(value = "User last login ts")
+    @Schema(description = "User last login ts")
     @JsonProperty("userLastLoginTs")
     @Column(name = "USER_LAST_LOGIN_TS")
     var userLastLoginTs: OffsetDateTime? = null,
 
-    @ApiModelProperty(value = "user's last login device")
+    @Schema(description = "user's last login device")
     @JsonProperty("userLastLoginDevice")
     @Column(name = "USER_LAST_LOGIN_DEVICE")
     var userLastLoginDevice: String? = null,
 
-    @ApiModelProperty(value = "User name")
+    @Schema(description = "User name")
     @JsonProperty("userName")
     @Column(name = "USER_NAME")
     val userName: String,
 
-    @ApiModelProperty(value = "User email")
+    @Schema(description = "User email")
     @JsonProperty("userEmail")
     @Column(name = "USER_EMAIL")
     var userEmail: String? = null,
 
-    @ApiModelProperty(value = "User status")
+    @Schema(description = "User status")
     @JsonProperty("userStatus")
     @Column(name = "USER_STATUS")
     var userStatus: Int? = null,
 
-    @ApiModelProperty(value = "User role - ADMIN, USER")
+    @Schema(description = "User role - ADMIN, USER")
     @JsonProperty("userRole")
     @Column(name = "USER_ROLE")
     var userRole: String? = null

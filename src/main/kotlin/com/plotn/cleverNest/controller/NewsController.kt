@@ -18,6 +18,8 @@ import kotlin.random.Random
 import org.springframework.beans.factory.annotation.Autowired
 import java.net.URI
 import java.nio.charset.Charset
+import java.util.*
+import kotlin.collections.ArrayList
 
 @RestController
 @RequestMapping("/news")
@@ -36,10 +38,11 @@ class NewsController {
     }
 
     @GetMapping("/getRandomNewsMeduza", produces = [MediaType.APPLICATION_JSON_VALUE])
-    @Scheduled(fixedRate = 100000) // 5/3 min
+    //@Scheduled(fixedRate = 100000) // 5/3 min
+    @Scheduled(fixedRate = 15000) // 15 sec
     fun getRandomNewsMeduza(): NewsRecord {
         log("fetching news record")
-        val nr = NewsRecord("")
+        val nr = NewsRecord("", "")
         val meduzaUrl = env.getProperty("news.meduzaUrl") ?: ""
         if (meduzaUrl.isNullOrBlank()) {
             log("meduzaUrl is null")
@@ -55,14 +58,19 @@ class NewsController {
         if (listNews.size>0) listNews.removeAt(0)
         if (listNews.size>0) {
             var rnd = Random.nextInt(listNews.size)
-            nr.newsText = listNews[rnd]
-            log("news text got: ${nr.newsText}")
-            val b: ByteArray = nr.newsText.toLowerCase().toByteArray(Charset.forName("CP1251"))
+            nr.newsTextOrig = listNews[rnd]
+            log("news text got: ${nr.newsTextOrig}")
+            val b: ByteArray = nr.newsTextOrig.lowercase(Locale.getDefault()).toByteArray(Charset.forName("CP1251"))
             var updString = b.toHexString("","","").replace("%A0", "%20").
                 replace("%AB", "%22").replace("%BB", "%22")
             nr.newsText = updString
             //nr.newsText = String(b, Charset.forName("CP1251"))
-            log("news text got updated: ${nr.newsText}")
+            log("news text got updated (cp1251): ${nr.newsText}")
+            val bU: ByteArray = nr.newsTextOrig.lowercase(Locale.getDefault()).toByteArray(Charset.forName("UTF-8"))
+            var updStringU = bU.toHexString("","","").replace("%A0", "%20").
+                replace("%AB", "%22").replace("%BB", "%22")
+            nr.newsTextOrig = updStringU
+            log("news text got updated (utf): ${nr.newsTextOrig}")
         }
         val restTemplate = RestTemplate()
         val uriComponents = UriComponentsBuilder.newInstance()
@@ -74,8 +82,28 @@ class NewsController {
         var s = uriComponents.toUriString().replace("12345678901234567890", nr.newsText)
         log("news text got updated 2: $s")
         val uri = URI(s)
-        /*val resp =*/ restTemplate.getForEntity(uri, String::class.java)
-        //var sBody = resp.body
+        try {
+            restTemplate.getForEntity(uri, String::class.java)
+        } catch (e: Exception) {
+            log("cannot transfer news to the device: " + e.message)
+        }
+        // add value to easyget
+//        var easygetUrl = env.getProperty("news.easygetAddr") ?: ""
+//        if (!easygetUrl.isNullOrBlank()) {
+//            easygetUrl = "$easygetUrl/row/news"
+//            val restTemplateE = RestTemplate()
+//            val uriComponentsE = UriComponentsBuilder
+//                .fromUriString(easygetUrl).path("/${nr.newsTextOrig}")
+//                .build()
+//            var sE = uriComponentsE.toUriString()
+//            log("news text easyget url: $sE")
+//            val uriE = URI(sE)
+//            try {
+//            restTemplateE.getForEntity(uriE, String::class.java)
+//            } catch (e: Exception) {
+//                log("cannot transfer news to easyget: " + e.message)
+//            }
+//        }
         return nr
     }
 }
